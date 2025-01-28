@@ -7,7 +7,7 @@ const secret = process.env.JWT_SECRET || 'your_jwt_secret';
 
 // register a new user
 export const registerNewUser = async (req: Request, res: Response) => {
-  const { username, password, type } = req.body;
+  const { username, email, password, type } = req.body;
   console.log('made it here')
 
   try {
@@ -15,35 +15,69 @@ export const registerNewUser = async (req: Request, res: Response) => {
       throw new Error('Invalid user type!');
     }
 
-    console.log('made it past type check');
+    // TODO: add validation checks for username, email, and password
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ username, password: hashedPassword, type });
+
+    const userObject = {
+      username,
+      email,
+      password: hashedPassword,
+      type,
+      headline: '',
+      website: '',
+      description: '',
+      events: []
+    }
+    const user = new User(userObject);
     const newUser = await user.save();
 
     const token = jwt.sign({ id: newUser._id, username: newUser.username }, secret, { expiresIn: '1h' });
-    res.json({ token, user: { username: newUser.username, id: newUser._id, type: newUser.type, events: newUser.events } });
+
+    res.json({
+      token, user: {
+        username: newUser.username,
+        email: newUser.email,
+        headline: newUser.headline,
+        website: newUser.website,
+        description: newUser.description,
+        id: newUser._id,
+        type: newUser.type,
+      }
+    });
 
   } catch (err) {
+    console.log(err);
     res.status(500).send('Error registering user!');
   }
 }
 
 // login a user
 export const loginUser = async (req: Request, res: Response) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ email });
     if (!user) throw new Error('User not found!');
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) throw new Error('Invalid credentials!');
 
     const token = jwt.sign({ id: user._id, username: user.username }, secret, { expiresIn: '1h' });
-    res.json({ token, user: { username: user.username, id: user._id, type: user.type, events: user.events } });
+
+    res.json({
+      token, user: {
+        username: user.username,
+        email: user.email,
+        headline: user.headline,
+        website: user.website,
+        description: user.description,
+        id: user._id,
+        type: user.type,
+      }
+    });
   } catch (err: any) {
-    res.status(401).send('Unable to authenticate user!');
+    res.status(401).send(err.message ?? 'Unable to authenticate user!');
   }
 };
 
@@ -55,7 +89,15 @@ export const getUserById = async (req: Request, res: Response) => {
       throw new Error('User not found!');
     }
 
-    res.status(200).json({ username: user.username, id: user._id, type: user.type, events: user.events });
+    res.status(200).json({
+      username: user.username,
+      email: user.email,
+      headline: user.headline,
+      website: user.website,
+      description: user.description,
+      id: user._id,
+      type: user.type,
+    });
   } catch (err: any) {
     res.status(404).json({ message: err.message ?? 'Error retrieving user!' });
   }

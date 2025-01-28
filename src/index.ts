@@ -8,6 +8,8 @@ import venueRouter from './routes/venues';
 import authRouter from './routes/auth'
 import tourRouter from './routes/tour';
 import artistRouter from './routes/artist';
+import profileRouter from './routes/profile';
+import eventRouter from './routes/event';
 
 const corsOptions = {
   origin: 'http://localhost:5173',
@@ -44,6 +46,8 @@ app.use('/auth', authRouter)
 app.use('/venues', authenticateToken, venueRouter);
 app.use('/tour', authenticateToken, tourRouter);
 app.use('/artist', authenticateToken, artistRouter)
+app.use('/events', authenticateToken, eventRouter)
+app.use('/profile', authenticateToken, profileRouter)
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello, TypeScript with Express!');
 });

@@ -41,24 +41,34 @@ export const getToursByTourName = async (req: Request, res: Response) => {
   }
 };
 
-export const addEventToTour = async (req: Request, res: Response) => {
-  const { tourId } = req.params;
-  const { date, venueId, startTime, endTime, isOver18, isOver21, notes } = req.body;
+// export const addEventToTour = async (req: Request, res: Response) => {
+//   const { tourId } = req.params;
+//   const { name, date, venueId, userId, startTime, endTime, isOver18, isOver21, notes } = req.body;
 
-  try {
-    const tour = await Tour.findById(tourId);
+//   try {
+//     const tour = await Tour.findById(tourId);
 
-    if (!tour) {
-      throw new Error('Tour not found!');
-    }
+//     if (!tour) {
+//       throw new Error('Tour not found!');
+//     }
 
-    tour?.events.push({ date, venueId, startTime, endTime, isOver18, isOver21, notes });
-    await tour?.save();
-    res.status(200).json(tour);
-  } catch (err: any) {
-    res.status(404).json({ message: err.message ?? "Error adding event to tour!" });
-  }
-}
+//     tour?.events.push({
+//       name,
+//       date,
+//       venueId,
+//       userId,
+//       startTime,
+//       endTime,
+//       isOver18,
+//       isOver21,
+//       notes
+//     });
+//     await tour?.save();
+//     res.status(200).json(tour);
+//   } catch (err: any) {
+//     res.status(404).json({ message: err.message ?? "Error adding event to tour!" });
+//   }
+// }
 
 export const createTour = async (req: Request, res: Response) => {
   const tour = new Tour({

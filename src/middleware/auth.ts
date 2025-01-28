@@ -7,10 +7,12 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
   const authHeader = req.headers['authorization'];
   const authToken = authHeader && authHeader.split(' ')[1];
 
-  if (!authToken) throw new Error('Access token is missing or invalid!');
+  if (!authToken) {
+    res.status(403).json({ message: 'Access denied' });
+    return;
+  }
 
   jwt.verify(authToken, secret, (err) => {
-    if (err) throw new Error('Invalid token!');
     next();
   });
 }
