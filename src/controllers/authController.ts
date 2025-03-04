@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from "../models/user";
 import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken';
+import { MongoAPIError } from "mongodb";
 
 const secret = process.env.JWT_SECRET || 'your_jwt_secret';
 
@@ -46,8 +47,16 @@ export const registerNewUser = async (req: Request, res: Response) => {
       }
     });
 
-  } catch (err) {
+  } catch (err: MongoAPIError | any) {
     console.log(err);
+
+    if (err.code === 11000) { // duplicate key error
+      const returnMessage = {
+        errorMessage: 'Duplicate key error',
+        value: err.keyValue
+      }
+      return res.status(400).send(returnMessage);
+    }
     res.status(500).send('Error registering user!');
   }
 }
