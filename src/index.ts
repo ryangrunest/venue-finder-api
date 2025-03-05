@@ -10,6 +10,7 @@ import tourRouter from './routes/tour';
 import artistRouter from './routes/artist';
 import profileRouter from './routes/profile';
 import eventRouter from './routes/event';
+import geocodeRouter from './routes/geocode';
 
 const corsOptions = {
   origin: 'http://localhost:5173',
@@ -48,6 +49,8 @@ app.use('/tour', authenticateToken, tourRouter);
 app.use('/artist', authenticateToken, artistRouter)
 app.use('/events', authenticateToken, eventRouter)
 app.use('/profile', authenticateToken, profileRouter)
+app.use('/geocode', geocodeRouter)
+
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello, TypeScript with Express!');
 });

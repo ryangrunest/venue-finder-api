@@ -35,7 +35,7 @@ export const registerNewUser = async (req: Request, res: Response) => {
 
     const token = jwt.sign({ id: newUser._id, username: newUser.username }, secret, { expiresIn: '1h' });
 
-    res.json({
+    res.status(200).json({
       token, user: {
         username: newUser.username,
         email: newUser.email,
@@ -55,7 +55,7 @@ export const registerNewUser = async (req: Request, res: Response) => {
         errorMessage: 'Duplicate key error',
         value: err.keyValue
       }
-      return res.status(400).send(returnMessage);
+      res.status(400).send(returnMessage);
     }
     res.status(500).send('Error registering user!');
   }
